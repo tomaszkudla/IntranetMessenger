@@ -1,10 +1,11 @@
-﻿@model IEnumerable< new { int ID, string Name } >
+﻿@model IEnumerable<IntranetMessenger.Models.UserShow>
 
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
+<h2>
+    Logged user: @IntranetMessenger.Models.ActiveUser.Name
+</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -12,8 +13,8 @@
 <table class="table">
     <tr>
         <th>
-            @*@Html.DisplayFor(model => "User List")*@
-            "User List"
+            @*@Html.DisplayFor(model => model.Name)
+                "User List"*@
         </th>
         <th></th>
     </tr>
@@ -22,13 +23,13 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
 
-                @*@Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
                 @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
 
             </td>
         </tr>

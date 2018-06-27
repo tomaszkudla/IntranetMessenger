@@ -18,8 +18,9 @@ namespace IntranetMessenger.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            var UserNames = from u in db.Users select new {u.ID, u.Name};
-            return View(UserNames.ToList());
+            var UsersShow = from u in db.Users select new UserShow { ID = u.ID, Name = u.Name };
+            IEnumerable<UserShow> UsersList = UsersShow.ToList();
+            return View(UsersList);
         }
 
         // GET: Users/Details/5

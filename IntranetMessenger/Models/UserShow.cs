@@ -15,5 +15,8 @@ namespace IntranetMessenger.Models
             ID = user.ID;
             Name = user.Name;
         }
+
+        public UserShow()
+        { }
     }
 }
