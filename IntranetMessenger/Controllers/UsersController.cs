@@ -23,21 +23,6 @@ namespace IntranetMessenger.Controllers
             return View(UsersList);
         }
 
-        // GET: Users/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
         // GET: Users/Create
         public ActionResult Create()
         {
@@ -60,68 +45,63 @@ namespace IntranetMessenger.Controllers
                 user.Password = String.Empty;
                 db.spAddUser(user.Name, sHash);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                ActiveUser.ID = user.ID;
+                ActiveUser.Name = user.Name;
+                ActiveUser.Hash = user.Hash;
+                return Redirect("~/Users/Index");
+
+              
             }
 
             return View(user);
         }
 
-        // GET: Users/Edit/5
-        public ActionResult Edit(int? id)
+        // GET: Logging/Log
+        public ActionResult Log()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
+            return View();
         }
 
-        // POST: Users/Edit/5
+
+        // POST: Logging/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,Hash")] User user)
+        public ActionResult Log([Bind(Include = "Name,Password")] UserLog userLog)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
+                byte[] bHash = SHA256.Create().ComputeHash(System.Text.Encoding.UTF8.GetBytes(userLog.Password));
+                string sHash = BitConverter.ToString(bHash).Replace("-", String.Empty);
+                userLog.Password = String.Empty;
+                User FindUser = db.Users.Single(u => u.Name == userLog.Name);
+
+                if (FindUser != null && FindUser.Hash == sHash)
+                {
+                    ActiveUser.ID = FindUser.ID;
+                    ActiveUser.Name = FindUser.Name;
+                    ActiveUser.Hash = FindUser.Hash;
+                    return Redirect("~/Users/Index");
+                }
                 return RedirectToAction("Index");
             }
-            return View(user);
+
+            return View(userLog);
         }
 
-        // GET: Users/Delete/5
-        public ActionResult Delete(int? id)
+        // GET: Logging/Log
+        public ActionResult LogOut()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
+            ActiveUser.Name = "";
+            ActiveUser.ID = 0;
+            ActiveUser.Hash = "";
+
+            return Redirect("~/Home/Index");
         }
 
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            User user = db.Users.Find(id);
-            db.Users.Remove(user);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+
 
         protected override void Dispose(bool disposing)
         {

@@ -24,7 +24,13 @@
                     <li>@Html.ActionLink("Strona główna", "Index", "Home")</li>
                     <li>@Html.ActionLink("Informacje", "About", "Home")</li>
                     <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
+                    <li>Logged user: @IntranetMessenger.Models.ActiveUser.Name</li>
+                    @if (IntranetMessenger.Models.ActiveUser.Name != "")
+                    { <li><a class="btn btn-default" href="~/Users/LogOut">Log out &raquo;</a></li>}
+                    
+
                 </ul>
+                
             </div>
         </div>
     </div>

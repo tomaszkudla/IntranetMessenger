@@ -9,7 +9,7 @@ namespace IntranetMessenger.Models
 
     public partial class User
     {
-       
+
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
