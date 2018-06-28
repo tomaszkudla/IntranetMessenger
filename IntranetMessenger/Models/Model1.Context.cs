@@ -28,6 +28,7 @@ namespace IntranetMessenger.Models
         }
     
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
     
         public virtual int spAddUser(string name, string hash)
         {
@@ -53,6 +54,36 @@ namespace IntranetMessenger.Models
                 new ObjectParameter("Hash", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spAddUser1", nameParameter, hashParameter);
+        }
+    
+        public virtual int spSendMessage(string sender, string reciever, string messageText, Nullable<System.DateTime> sendTime)
+        {
+            var senderParameter = sender != null ?
+                new ObjectParameter("Sender", sender) :
+                new ObjectParameter("Sender", typeof(string));
+    
+            var recieverParameter = reciever != null ?
+                new ObjectParameter("Reciever", reciever) :
+                new ObjectParameter("Reciever", typeof(string));
+    
+            var messageTextParameter = messageText != null ?
+                new ObjectParameter("MessageText", messageText) :
+                new ObjectParameter("MessageText", typeof(string));
+    
+            var sendTimeParameter = sendTime.HasValue ?
+                new ObjectParameter("SendTime", sendTime) :
+                new ObjectParameter("SendTime", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spSendMessage", senderParameter, recieverParameter, messageTextParameter, sendTimeParameter);
+        }
+    
+        public virtual ObjectResult<spShowMessages_Result> spShowMessages(string reciever)
+        {
+            var recieverParameter = reciever != null ?
+                new ObjectParameter("Reciever", reciever) :
+                new ObjectParameter("Reciever", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spShowMessages_Result>("spShowMessages", recieverParameter);
         }
     }
 }

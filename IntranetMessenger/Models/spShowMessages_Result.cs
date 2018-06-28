@@ -10,12 +10,13 @@
 namespace IntranetMessenger.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class User
+    public partial class spShowMessages_Result
     {
         public int ID { get; set; }
-        public string Name { get; set; }
-        public string Hash { get; set; }
+        public string Sender { get; set; }
+        public string Reciever { get; set; }
+        public string MessageText { get; set; }
+        public System.DateTime SendTime { get; set; }
     }
 }

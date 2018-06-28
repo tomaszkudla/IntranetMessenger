@@ -5,13 +5,23 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="TestModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Messages">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sender" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Reciever" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MessageText" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="SendTime" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Hash" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Hash" Type="nvarchar" MaxLength="64" />
         </EntityType>
         <Function Name="spAddUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Name" Type="nvarchar" Mode="In" />
@@ -21,7 +31,17 @@
           <Parameter Name="Name" Type="nvarchar" Mode="In" />
           <Parameter Name="Hash" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="spSendMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Sender" Type="nvarchar" Mode="In" />
+          <Parameter Name="Reciever" Type="nvarchar" Mode="In" />
+          <Parameter Name="MessageText" Type="nvarchar" Mode="In" />
+          <Parameter Name="SendTime" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="spShowMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Reciever" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="TestModelStoreContainer">
+          <EntitySet Name="Messages" EntityType="Self.Messages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -34,7 +54,7 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Hash" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Hash" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="TestEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Users" EntityType="Self.User" />
@@ -46,7 +66,34 @@
             <Parameter Name="Name" Mode="In" Type="String" />
             <Parameter Name="Hash" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Messages" EntityType="TestModel.Message" />
+          <FunctionImport Name="spSendMessage">
+            <Parameter Name="Sender" Mode="In" Type="String" />
+            <Parameter Name="Reciever" Mode="In" Type="String" />
+            <Parameter Name="MessageText" Mode="In" Type="String" />
+            <Parameter Name="SendTime" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="spShowMessages" ReturnType="Collection(TestModel.spShowMessages_Result)">
+          <Parameter Name="Reciever" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sender" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Reciever" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MessageText" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="SendTime" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <ComplexType Name="spShowMessages_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Sender" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Reciever" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MessageText" Nullable="false" MaxLength="1000" />
+          <Property Type="DateTime" Name="SendTime" Nullable="false" Precision="23" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -64,6 +111,29 @@
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="spAddUser" FunctionName="TestModel.Store.spAddUser" />
           <FunctionImportMapping FunctionImportName="spAddUser1" FunctionName="TestModel.Store.spAddUser1" />
+          <EntitySetMapping Name="Messages">
+            <EntityTypeMapping TypeName="TestModel.Message">
+              <MappingFragment StoreEntitySet="Messages">
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+                <ScalarProperty Name="MessageText" ColumnName="MessageText" />
+                <ScalarProperty Name="Reciever" ColumnName="Reciever" />
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spSendMessage" FunctionName="TestModel.Store.spSendMessage" />
+          <FunctionImportMapping FunctionImportName="spShowMessages" FunctionName="TestModel.Store.spShowMessages">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TestModel.spShowMessages_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="Reciever" ColumnName="Reciever" />
+                <ScalarProperty Name="MessageText" ColumnName="MessageText" />
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
