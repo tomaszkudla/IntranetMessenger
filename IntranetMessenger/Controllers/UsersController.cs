@@ -39,7 +39,12 @@ namespace IntranetMessenger.Controllers
             if (ModelState.IsValid)
             {
                 //db.Users.Add(user);
-
+                ActiveUser.alert = "";
+                if (db.Users.Any(n=>n.Name==user.Name))
+                {
+                    ActiveUser.alert = "Name already exists";
+                    return View("Create", user);
+                }
                 byte[] bHash = SHA256.Create().ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password));
                 string sHash = BitConverter.ToString(bHash).Replace("-", String.Empty);
                 user.Password = String.Empty;
@@ -83,7 +88,7 @@ namespace IntranetMessenger.Controllers
                     ActiveUser.ID = FindUser.ID;
                     ActiveUser.Name = FindUser.Name;
                     ActiveUser.Hash = FindUser.Hash;
-                    return Redirect("~/Users/Index");
+                    return Redirect("~/Messages/Index");
                 }
                 return RedirectToAction("Index");
             }
