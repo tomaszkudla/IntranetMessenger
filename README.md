@@ -1,7 +1,7 @@
 # IntranetMessenger
 Web service for communication within office
 
-Application was mainly done for learning purposes.    
+Application was done mainly for learning purposes.    
 It uses ASP .NET MVC, MS SQL Database and Entity Framework.   
 
 Database on the server has tables for users and messages.  
@@ -10,11 +10,11 @@ Each message, with sender, reciever and send time, is added to the messages tabl
 Logged user has only access to own send/recieved messages.  
    
 
-![Alt text](screens/screen000.png?raw=true "Home page")
-![Alt text](screens/screen001.png?raw=true "Registering")
-![Alt text](screens/screen002.png?raw=true "Logging in")
-![Alt text](screens/screen003.png?raw=true "Incorrect input check")
-![Alt text](screens/screen004.png?raw=true "Logging in")
-![Alt text](screens/screen005.png?raw=true "User List Page")
-![Alt text](screens/screen006.png?raw=true "Creating message")
-![Alt text](screens/screen007.png?raw=true "Message box")
+![Alt text](screens/screen000.PNG?raw=true "Home page")  
+![Alt text](screens/screen001.PNG?raw=true "Registering")  
+![Alt text](screens/screen002.PNG?raw=true "Logging in")  
+![Alt text](screens/screen003.PNG?raw=true "Incorrect input check")  
+![Alt text](screens/screen004.PNG?raw=true "Logging in")  
+![Alt text](screens/screen005.PNG?raw=true "User List Page")  
+![Alt text](screens/screen006.PNG?raw=true "Creating message")  
+![Alt text](screens/screen007.PNG?raw=true "Message box")  
