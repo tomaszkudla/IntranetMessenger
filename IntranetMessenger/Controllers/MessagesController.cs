@@ -17,18 +17,30 @@ namespace IntranetMessenger.Controllers
         // GET: Messages
         public ActionResult Index()
         {
-            var MessageList = db.spShowMessages(ActiveUser.Name).ToList();
-            var MessageList2 = from m in MessageList select new Message { ID = m.ID, Reciever = m.Reciever, Sender = m.Sender, MessageText = m.MessageText, SendTime = m.SendTime };
+            if (Session["Name"]!=null)
+            {
+                var MessageList = db.spShowMessages(Session["Name"].ToString()).ToList();
+                var MessageList2 = from m in MessageList select new Message { ID = m.ID, Reciever = m.Reciever, Sender = m.Sender, MessageText = m.MessageText, SendTime = m.SendTime };
+                return View(MessageList2);
+            }
+            else
+            {
+                return Redirect("~/Home/Index");
+            }
 
-            return View(MessageList2);
         }
-
-       
 
         // GET: Messages/Create
         public ActionResult Create(string reciever)
         {
-            return View(new Message {Reciever=reciever });
+            if (Session["Name"]!=null)
+            {
+                return View(new MessageTextInput { MessageText = "", Reciever = reciever });
+            }
+            else
+            {
+                return Redirect("~/Home/Index");
+            }
         }
 
         // POST: Messages/Create
@@ -36,21 +48,14 @@ namespace IntranetMessenger.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "MessageText")] Message message, string reciever)
+        public ActionResult Create([Bind(Include = "Reciever,MessageText")] MessageTextInput messageTextInput)
         {
-
-            message.Sender = ActiveUser.Name;
-            message.SendTime = DateTime.Now;
-            message.Reciever = reciever;
             if (ModelState.IsValid)
             {
-                db.spSendMessage(message.Sender, reciever, message.MessageText, message.SendTime);
-                //db.Messages.Add(message);
-                //db.SaveChanges();
+                db.spSendMessage(Session["Name"].ToString(), messageTextInput.Reciever, messageTextInput.MessageText, DateTime.Now);
                 return RedirectToAction("Index");
             }
-
-            return View(message);
+            return View(messageTextInput);
         }
 
 

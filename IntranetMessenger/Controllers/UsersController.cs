@@ -18,9 +18,17 @@ namespace IntranetMessenger.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            var UsersShow = from u in db.Users select new UserShow { ID = u.ID, Name = u.Name };
-            IEnumerable<UserShow> UsersList = UsersShow.ToList();
-            return View(UsersList);
+            if (Session["Name"]!=null)
+            {
+                var UsersShow = from u in db.Users select new UserShow { ID = u.ID, Name = u.Name };
+                IEnumerable<UserShow> UsersList = UsersShow.ToList();
+                return View(UsersList);
+            }
+            else
+            {
+                return RedirectToAction("~/Home/Index");
+            }
+
         }
 
         // GET: Users/Create
@@ -34,32 +42,31 @@ namespace IntranetMessenger.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,Password,ConfirmPassword")] User user)
+        public ActionResult Create([Bind(Include = "Name,Password,ConfirmPassword")] UserRegister userRegister)
         {
             if (ModelState.IsValid)
             {
                 //db.Users.Add(user);
-                ActiveUser.alert = "";
-                if (db.Users.Any(n=>n.Name==user.Name))
+                Session["alert"] = "";
+                if (db.Users.Any(n => n.Name == userRegister.Name))
                 {
-                    ActiveUser.alert = "Name already exists";
-                    return View("Create", user);
+                    Session["alert"] = "Name already exists";
+                    return View("Create", userRegister);
                 }
-                byte[] bHash = SHA256.Create().ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password));
+                byte[] bHash = SHA256.Create().ComputeHash(System.Text.Encoding.UTF8.GetBytes(userRegister.Password));
                 string sHash = BitConverter.ToString(bHash).Replace("-", String.Empty);
-                user.Password = String.Empty;
-                db.spAddUser(user.Name, sHash);
+                userRegister.Password = String.Empty;
+                db.spAddUser(userRegister.Name, sHash);
                 db.SaveChanges();
 
-                ActiveUser.ID = user.ID;
-                ActiveUser.Name = user.Name;
-                ActiveUser.Hash = user.Hash;
+                Session["Name"] = userRegister.Name;
+                
                 return Redirect("~/Users/Index");
 
               
             }
 
-            return View(user);
+            return View(userRegister);
         }
 
         // GET: Logging/Log
@@ -78,31 +85,33 @@ namespace IntranetMessenger.Controllers
         {
             if (ModelState.IsValid)
             {
+                Session["alert"] = "";
                 byte[] bHash = SHA256.Create().ComputeHash(System.Text.Encoding.UTF8.GetBytes(userLog.Password));
                 string sHash = BitConverter.ToString(bHash).Replace("-", String.Empty);
                 userLog.Password = String.Empty;
-                User FindUser = db.Users.Single(u => u.Name == userLog.Name);
+                User FindUser = db.Users.SingleOrDefault(u => u.Name == userLog.Name);
 
                 if (FindUser != null && FindUser.Hash == sHash)
                 {
-                    ActiveUser.ID = FindUser.ID;
-                    ActiveUser.Name = FindUser.Name;
-                    ActiveUser.Hash = FindUser.Hash;
+                    
+                    Session["Name"] = FindUser.Name;
+                    
                     return Redirect("~/Messages/Index");
                 }
-                return RedirectToAction("Index");
+                else
+                {
+                    Session["alert"] = "Name or password is incorrect";
+                    return RedirectToAction("Log");
+                }
+                
             }
-
             return View(userLog);
         }
 
         // GET: Logging/Log
         public ActionResult LogOut()
         {
-            ActiveUser.Name = "";
-            ActiveUser.ID = 0;
-            ActiveUser.Hash = "";
-
+            Session["Name"] = "";
             return Redirect("~/Home/Index");
         }
 

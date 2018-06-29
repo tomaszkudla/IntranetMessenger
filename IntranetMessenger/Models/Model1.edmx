@@ -38,7 +38,7 @@
           <Parameter Name="SendTime" Type="datetime" Mode="In" />
         </Function>
         <Function Name="spShowMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Reciever" Type="nvarchar" Mode="In" />
+          <Parameter Name="Name" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="TestModelStoreContainer">
           <EntitySet Name="Messages" EntityType="Self.Messages" Schema="dbo" store:Type="Tables" />
@@ -74,7 +74,7 @@
             <Parameter Name="SendTime" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="spShowMessages" ReturnType="Collection(TestModel.spShowMessages_Result)">
-          <Parameter Name="Reciever" Mode="In" Type="String" />
+          <Parameter Name="Name" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Message">

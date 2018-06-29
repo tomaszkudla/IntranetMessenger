@@ -77,13 +77,13 @@ namespace IntranetMessenger.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spSendMessage", senderParameter, recieverParameter, messageTextParameter, sendTimeParameter);
         }
     
-        public virtual ObjectResult<spShowMessages_Result> spShowMessages(string reciever)
+        public virtual ObjectResult<spShowMessages_Result> spShowMessages(string name)
         {
-            var recieverParameter = reciever != null ?
-                new ObjectParameter("Reciever", reciever) :
-                new ObjectParameter("Reciever", typeof(string));
+            var nameParameter = name != null ?
+                new ObjectParameter("Name", name) :
+                new ObjectParameter("Name", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spShowMessages_Result>("spShowMessages", recieverParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spShowMessages_Result>("spShowMessages", nameParameter);
         }
     }
 }

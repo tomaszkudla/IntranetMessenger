@@ -3,34 +3,18 @@
 @{
     ViewBag.Title = "Index";
 }
-<h2>
-    Logged user: @IntranetMessenger.Models.ActiveUser.Name
-</h2>
+<h2>User List</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
-    <tr>
-        <th>
-            @*@Html.DisplayFor(model => model.Name)
-                "User List"*@
-        </th>
-        <th></th>
-    </tr>
-
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Name) 
             </td>
-            <td>
-
-                @Html.ActionLink("Send message", "Create","Messages", new { reciever = item.Name },null)
-
+            <td align="right">
+                @Html.ActionLink("Send message", "Create", "Messages", new {reciever = item.Name}, null)
             </td>
         </tr>
     }
-
 </table>

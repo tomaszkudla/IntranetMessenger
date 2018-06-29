@@ -11,7 +11,11 @@ namespace IntranetMessenger.Controllers
     {
         public ActionResult Index()
         {
-           
+            if (Session["Name"] == null)
+            {
+                Session["Name"] = "";
+            }
+            Session["alert"] = "";
             return View();
         }
 
