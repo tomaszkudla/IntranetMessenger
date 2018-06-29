@@ -7,7 +7,7 @@ It uses ASP .NET MVC, MS SQL Database and Entity Framework.
 Database on the server has tables for users and messages.  
 New user has to register (users table record is added), then he can send messages to other users.   
 Each message, with sender, reciever and send time, is added to the messages table.  
-Logged user has only access to own send/recieved messages.  
+Logged user has only access to own sent/recieved messages.  
    
 
 ![Alt text](screens/screen000.PNG?raw=true "Home page")  
